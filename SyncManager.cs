@@ -36,7 +36,7 @@ namespace OpenGameSync.SDK
             }
         }
 
-        public virtual T InitLocalFile(string localPath, string absolutePath)
+        protected virtual T InitLocalFile(string localPath, string absolutePath)
         {
             return (T)Activator.CreateInstance(typeof(T), localPath, absolutePath)!;
         }

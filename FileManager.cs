@@ -61,7 +61,7 @@ namespace OpenGameSync.SDK
             await SFile.WriteAllBytesAsync(LocalPath, content);
         }
 
-        public virtual Task SaveRemoteAsync()
+        public virtual async Task SaveRemoteAsync()
         {
             throw new NotImplementedException();
         }
