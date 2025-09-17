@@ -11,6 +11,7 @@ namespace OpenGameSync.SDK
 
     public class SyncManager<T> where T : File
     {
+        #region Variables & Properties
         /// <summary>
         /// The absolute local root directory where the file is stored.
         /// </summary>
@@ -35,6 +36,7 @@ namespace OpenGameSync.SDK
         /// Usally updated with <see cref="FetchLocal"/> .
         /// </summary>
         private List<T> localFiles = new List<T>();
+        #endregion
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SyncManager"/> class. 
@@ -44,17 +46,7 @@ namespace OpenGameSync.SDK
         {
             this.localPath = localPath;
         }
-
-        /// <summary>
-        /// Fetches the remote storage. <br>
-        /// It updates the <see cref="remoteFiles"/> list.
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public virtual async Task FetchRemote()
-        {
-            throw new NotImplementedException();
-        }
+        #region Local
         /// <summary>
         /// Fetches the local storage (at <see cref="localPath"/>). <br>
         /// It updates the <see cref="localFiles"/> list.
@@ -73,7 +65,7 @@ namespace OpenGameSync.SDK
                 );
             }
         }
-
+        #region Override
         /// <summary>
         /// Creates a new instance of <typeparamref name="T"/>. 
         /// <typeparamref name="T"/> must be derived from <see cref="File"/>. 
@@ -87,6 +79,84 @@ namespace OpenGameSync.SDK
         {
             return (T)Activator.CreateInstance(typeof(T), localPath, relativePath)!;
         }
+        #endregion
+        /// <summary>
+        /// Synchronizes the remote files to the local storage.
+        /// </summary>
+        /// <remarks>
+        /// Before calling this method, you must call <c>FetchRemote</c> to populate the remote file list. 
+        /// This method assumes that the file list has already been generated.
+        /// </remarks>
+        /// <returns>
+        /// </returns>
+        public async Task SyncToLocal()
+        {
+            var tasks = new List<Task>();
+            foreach (var remoteFile in remoteFiles)
+            {
+                tasks.Add(DownloadToLocal(remoteFile));
+            }
+            await Task.WhenAll(tasks);
+        }
+        /// <summary>
+        /// Downloads an file from remote local.
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        protected async Task DownloadToLocal(T file)
+        {
+            await file.LoadRemoteAsync();
+            await file.SaveLocalAsync();
+        }
+
+        /// <summary>
+        /// Lists all files in a directory on the local storage.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        private string[] GetFiles(string path)
+        {
+            List<string> files = new List<string>();
+            files.AddRange(Directory.GetFiles(path));
+            var directories = Directory.GetDirectories(path);
+            foreach (var subDir in directories)
+            {
+                files.AddRange(GetFiles(subDir));
+            }
+            string[] raw = files.ToArray();
+            files.Clear();
+            files = null;
+            return raw;
+        }
+
+
+
+        #endregion
+        #region Remote
+        #region Override
+        /// <summary>
+        /// Fetches the remote storage. <br>
+        /// It updates the <see cref="remoteFiles"/> list.
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public virtual async Task FetchRemote()
+        {
+            throw new NotImplementedException();
+        }
+
+
+
+        /// <summary>
+        /// Deletes the files in the remote storage. (Needs to be overridden)
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        protected virtual async Task ClearRemote()
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
 
         /// <summary>
         /// Clears the <see cref="remoteFiles"/> list.
@@ -126,35 +196,6 @@ namespace OpenGameSync.SDK
             }
             await Task.WhenAll(tasks);
         }
-
-        /// <summary>
-        /// Synchronizes the remote files to the local storage.
-        /// </summary>
-        /// <remarks>
-        /// Before calling this method, you must call <c>FetchRemote</c> to populate the remote file list. 
-        /// This method assumes that the file list has already been generated.
-        /// </remarks>
-        /// <returns>
-        /// </returns>
-        public async Task SyncToLocal()
-        {
-            var tasks = new List<Task>();
-            foreach (var remoteFile in remoteFiles)
-            {
-                tasks.Add(DownloadToLocal(remoteFile));
-            }
-            await Task.WhenAll(tasks);
-        }
-
-        /// <summary>
-        /// Deletes the files in the remote storage. (Needs to be overridden)
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NotImplementedException"></exception>
-        protected virtual async Task ClearRemote()
-        {
-            throw new NotImplementedException();
-        }
         /// <summary>
         /// Uploads an file from local to remote.
         /// </summary>
@@ -165,39 +206,7 @@ namespace OpenGameSync.SDK
             await file.LoadLocalAsync();
             await file.SaveRemoteAsync();
         }
-        /// <summary>
-        /// Downloads an file from remote local.
-        /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
-        protected async Task DownloadToLocal(T file)
-        {
-            await file.LoadRemoteAsync();
-            await file.SaveLocalAsync();
-        }
 
-
-        /// <summary>
-        /// Lists all files in a directory on the local storage.
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        private string[] GetFiles(string path)
-        {
-            List<string> files = new List<string>();
-            files.AddRange(Directory.GetFiles(path));
-            var directories = Directory.GetDirectories(path);
-            foreach (var subDir in directories)
-            {
-                files.AddRange(GetFiles(subDir));
-            }
-            string[] raw = files.ToArray();
-            files.Clear();
-            files = null;
-            return raw;
-        }
-
-
-
+        #endregion
     }
 }
