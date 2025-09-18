@@ -5,5 +5,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+<PropertyGroup>
+  <TargetFramework>net8.0</TargetFramework>
+  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  <PackageId>OGS.SDK</PackageId>
+  <Version>1.0.0</Version>
+  <Authors>SaffronSolid935</Authors>
+  <Description>OpenGameSync.SDK is an open-source software development kit (SDK) for game synchronisation.
+While it is not a complete solution, it provides a solid foundation for developing custom synchronisation logic (it is a framework-like package). </Description>
+  <PackageTags>utilities</PackageTags>
+  <RepositoryUrl>https://github.com/SaffronSolid935/OGS.SDK</RepositoryUrl>
+</PropertyGroup>
 
 </Project>
