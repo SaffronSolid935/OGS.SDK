@@ -41,7 +41,7 @@ namespace OpenGameSync.SDK
         {
             get
             {
-                if (!File.Exists(LocalPath))
+                if (!SFile.Exists(LocalPath))
                 {
                     return null;
                 }
