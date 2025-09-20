@@ -7,6 +7,7 @@ For more information, see [Usage](#usage).
 ## ToC
 
 - [Install in project](#install-in-project)
+    - [Download NuGet package and use it localy (recommend)](#download-nuget-package-and-use-it-localy-recommend)
     - [Cloning into project](#cloning-into-project)
     - [As Submodule](#as-submodule)
 - [Usage](#usage)
@@ -16,6 +17,24 @@ For more information, see [Usage](#usage).
 > ⚠️ This package is currently not published on NuGet.
 The only way to include it is by adding it as a Git submodule or Building on your own as DLL.
 (A package release may follow in the future.)
+
+### Download NuGet package and use it localy (recommend)
+
+1. Open [`Releases`](https://github.com/SaffronSolid935/OGS.SDK/releases/tag/latest) and download the attached NuGet package.
+2. Save the NuGet package to a directory of your choice.
+3. In your C# porject run: <br>
+    ```bash
+    dotnet nuget add source "C:\path\to\nuget-packages" --name LocalPackages # or the name of your choice
+    ```
+4. Do one of these steps:
+    - If your project doesn't already have the package referenced: <br>
+        ```bash
+        dotnet add package OGS.SDK 
+        ```
+    - If your project already has the relevant package: <br>
+        ```bash
+        dotnet restore
+        ```
 
 ### Cloning into project
 
