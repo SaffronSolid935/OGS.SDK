@@ -1,6 +1,6 @@
 # Changelog
 
-## 2025-09-18 - v1.0.1
+## 2025-09-19 - v1.0.1
 - Project reconfigured for compatibility with .NET Standard 2.0 and .NET 8 (Core).
 
 ## 2025-09-18 - v1.0.0
